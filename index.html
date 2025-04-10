@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Specimen Size Converter to µm</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f4f8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 350px;
+      text-align: center;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    button {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #result {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    h2 {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" id="usernameSection">
+  <h2>Enter your username</h2>
+  <input type="text" id="usernameInput" placeholder="Username" />
+  <button onclick="startConversion()">Start</button>
+</div>
+
+<div class="container hidden" id="converterSection">
+  <h2 id="welcomeMessage"></h2>
+
+  <label>Measured Size:</label>
+  <input type="number" id="sizeInput" placeholder="Enter size" />
+
+  <label>Unit (m, cm, mm, µm, um, nm):</label>
+  <select id="unitSelect">
+    <option value="m">m</option>
+    <option value="cm">cm</option>
+    <option value="mm">mm</option>
+    <option value="µm">µm</option>
+    <option value="um">um</option>
+    <option value="nm">nm</option>
+  </select>
+
+  <label>Magnification Factor (optional):</label>
+  <input type="number" id="magnificationInput" placeholder="e.g., 10" />
+
+  <button onclick="performConversion()">Convert to µm</button>
+
+  <p id="result">Converted Size: </p>
+</div>
+
+<script>
+  function startConversion() {
+    const username = document.getElementById('usernameInput').value.trim();
+    if (!username) {
+      alert("Please enter your username.");
+      return;
+    }
+
+    document.getElementById('usernameSection').classList.add('hidden');
+    document.getElementById('converterSection').classList.remove('hidden');
+    document.getElementById('welcomeMessage').innerText = `Welcome, ${username}!`;
+  }
+
+  function convertToUm(size, fromUnit) {
+    const unitToUm = {
+      m: 1e6,
+      cm: 1e4,
+      mm: 1e3,
+      'µm': 1,
+      um: 1,
+      nm: 1e-3
+    };
+
+    if (!(fromUnit in unitToUm)) {
+      throw new Error("Unsupported unit entered.");
+    }
+
+    return size * unitToUm[fromUnit];
+  }
+
+  function performConversion() {
+    try {
+      let size = parseFloat(document.getElementById('sizeInput').value);
+      const fromUnit = document.getElementById('unitSelect').value;
+      const magnificationInput = document.getElementById('magnificationInput').value.trim();
+
+      if (isNaN(size) || size <= 0) {
+        throw new Error("Size must be a positive number.");
+      }
+
+      if (magnificationInput) {
+        const magnification = parseFloat(magnificationInput);
+        if (isNaN(magnification) || magnification <= 0) {
+          throw new Error("Magnification must be a positive number.");
+        }
+        size = size / magnification;
+      }
+
+      const resultUm = convertToUm(size, fromUnit);
+      document.getElementById('result').innerText = `Converted Size: ${resultUm.toFixed(2)} µm`;
+
+    } catch (error) {
+      alert("Error: " + error.message);
+    }
+  }
+</script>
+
+</body>
+</html>
