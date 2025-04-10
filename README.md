@@ -1,1 +1,2 @@
-# CSC-442
+# CSC-442 Computational Biology
+A specimen size converter
